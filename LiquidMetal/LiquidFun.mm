@@ -21,6 +21,14 @@ static b2World* world = nil;
     }
 }
 
+// TODO: Test this!
++ (void)destroyWorld {
+    if (world != nil) {
+        delete world;
+        world = nil;
+    }
+}
+
 + (void*)createParticleSystemWithRadius:(float)radius
                         dampingStrength:(float)dampingStrength
                            gravityScale:(float)gravityScale

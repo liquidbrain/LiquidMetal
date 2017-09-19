@@ -27,6 +27,8 @@ typedef struct Size2D {
 
 + (void)createWorldWithGravity:(Vector2D)gravity;
 
++ (void)destroyWorld;
+
 /**
  * Creates a particle system.
  * @param radius The radius of each particle in the system.
