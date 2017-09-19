@@ -57,7 +57,7 @@ static b2World* world = nil;
     // Create a physics world body.
     b2BodyDef bodyDef;
     bodyDef.position.Set(origin.x, origin.y);
-    b2Body *body = world->CreateBody(&bodyDef);
+    b2Body* body = world->CreateBody(&bodyDef);
 
     // Create the edges of the box.
     b2EdgeShape shape;

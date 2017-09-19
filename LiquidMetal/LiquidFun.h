@@ -62,6 +62,12 @@ typedef struct Size2D {
 
 + (int)particleCountForSystem:(void*)particleSystem;
 
+/**
+ * Set the maximum number of particles. The oldest particles will be destroyed to stay within the
+ * max limit.
+ * @param particleSystem A b2ParticleSystem.
+ * @param maxParticles The maximum number of particles.
+ */
 + (void)setMaxParticlesForSystem:(void*)particleSystem maxParticles:(int)maxParticles;
 
 /** Returns a pointer to the head of the particle positions array. */
