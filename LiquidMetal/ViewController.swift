@@ -40,10 +40,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        print("Create world!")
         LiquidFun.createWorld(withGravity: Vector2D(x: 0, y: -gravity))
 
-        print("Create particle system!")
         particleSystem = LiquidFun.createParticleSystem(
             withRadius: particleRadius / ptmRatio, dampingStrength: 0.2, gravityScale: 1, density: 1.2)
         LiquidFun.setMaxParticlesForSystem(particleSystem, maxParticles: 1500)
@@ -52,7 +50,6 @@ class ViewController: UIViewController {
         let screenWidth = Float(screenSize.width)
         let screenHeight = Float(screenSize.height)
 
-        print("Create particle box!")
         LiquidFun.createParticleBox(forSystem: particleSystem,
                                     position: Vector2D(x: screenWidth * 0.5 / ptmRatio, y: screenHeight * 0.5 / ptmRatio),
                                     size: Size2D(width: 50 / ptmRatio, height: 50 / ptmRatio))
@@ -61,19 +58,13 @@ class ViewController: UIViewController {
                                       size: Size2D(width: screenWidth / ptmRatio,
                                     height: screenHeight / ptmRatio))
 
-        print("Print particle info!")
-        printParticleInfo()
-
-        print("Create the Metal later, shaders, and build the render pipeline!")
         createMetalLayer()
         refreshVertexBuffer()
         refreshUniformBuffer()
         buildRenderPipeline()
 
-        print("Render!")
         render()
 
-        print("Runloop!")
         let displayLink = CADisplayLink(target: self, selector: #selector(ViewController.update))
         displayLink.preferredFramesPerSecond = 30
         displayLink.add(to: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
