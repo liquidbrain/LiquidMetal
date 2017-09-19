@@ -92,6 +92,11 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
 
+    // Clean up the physics world.
+    deinit {
+        LiquidFun.destroyWorld()
+    }
+
     func createMetalLayer() {
         device = MTLCreateSystemDefaultDevice()
 
