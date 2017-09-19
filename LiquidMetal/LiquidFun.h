@@ -62,6 +62,8 @@ typedef struct Size2D {
 
 + (int)particleCountForSystem:(void*)particleSystem;
 
++ (void)setMaxParticlesForSystem:(void*)particleSystem maxParticles:(int)maxParticles;
+
 /** Returns a pointer to the head of the particle positions array. */
 + (void*)particlePositionsForSystem:(void*)particleSystem;
 

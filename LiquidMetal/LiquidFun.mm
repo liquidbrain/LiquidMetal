@@ -91,6 +91,12 @@ static b2World* world = nil;
     return ((b2ParticleSystem*)particleSystem)->GetParticleCount();
 }
 
++ (void)setMaxParticlesForSystem:(void*)particleSystem maxParticles:(int)maxParticles
+{
+    ((b2ParticleSystem*)particleSystem)->SetDestructionByAge(true);
+    ((b2ParticleSystem*)particleSystem)->SetMaxParticleCount(maxParticles);
+}
+
 + (void*)particlePositionsForSystem:(void*)particleSystem
 {
     return ((b2ParticleSystem*)particleSystem)->GetPositionBuffer();
