@@ -241,4 +241,16 @@ class ViewController: UIViewController {
             print("particle: \(i) position: (\(position.x), \(position.y))")
         }
     }
+
+    // Tells this object that one or more new touches occurred in a view.
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch in touches {
+            let touchLocation = touch.location(in: view)
+            let position = Vector2D(x: Float(touchLocation.x) / ptmRatio,
+                                    y: Float(view.bounds.height - touchLocation.y) / ptmRatio)
+            let size = Size2D(width: 100 / ptmRatio, height: 100 / ptmRatio)
+            LiquidFun.createParticleBox(forSystem: particleSystem, position: position, size: size)
+            super.touchesBegan(touches, with: event)
+        }
+    }
 }
