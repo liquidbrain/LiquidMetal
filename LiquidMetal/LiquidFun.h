@@ -50,6 +50,16 @@ typedef struct Size2D {
                           position:(Vector2D)position
                               size:(Size2D)size;
 
+/**
+ * Create a bounding box.
+ * @param origin The box's origin (lower left hand corner)
+ * @param size The box's size.
+ */
++ (void*)createEdgeBoxWithOrigin:(Vector2D)origin size:(Size2D)size;
+
+/** Updates the global gravity vector. */
++ (void)setGravity:(Vector2D)gravity;
+
 + (int)particleCountForSystem:(void*)particleSystem;
 
 /** Returns a pointer to the head of the particle positions array. */
