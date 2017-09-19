@@ -21,8 +21,8 @@ static b2World* world = nil;
     }
 }
 
-// TODO: Test this!
-+ (void)destroyWorld {
++ (void)destroyWorld
+{
     if (world != nil) {
         delete world;
         world = nil;
