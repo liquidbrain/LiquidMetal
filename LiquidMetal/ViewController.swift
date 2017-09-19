@@ -8,6 +8,7 @@
 
 import UIKit
 import Metal
+import CoreMotion
 
 class ViewController: UIViewController {
 
@@ -33,6 +34,8 @@ class ViewController: UIViewController {
     let ptmRatio: Float = 32.0      // points-to-LiquidFun meters conversion ratio
     let particleRadius: Float = 9   // particle radius (in points)
 
+    let motionManager: CMMotionManager = CMMotionManager()
+
     // This method is called after the view controller has loaded its view hierarchy into memory.
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,6 +55,10 @@ class ViewController: UIViewController {
         LiquidFun.createParticleBox(forSystem: particleSystem,
                                     position: Vector2D(x: screenWidth * 0.5 / ptmRatio, y: screenHeight * 0.5 / ptmRatio),
                                     size: Size2D(width: 50 / ptmRatio, height: 50 / ptmRatio))
+
+        LiquidFun.createEdgeBox(withOrigin: Vector2D(x: 0, y: 0),
+                                      size: Size2D(width: screenWidth / ptmRatio,
+                                    height: screenHeight / ptmRatio))
 
         print("Print particle info!")
         printParticleInfo()
