@@ -46,6 +46,7 @@ class ViewController: UIViewController {
         print("Create particle system!")
         particleSystem = LiquidFun.createParticleSystem(
             withRadius: particleRadius / ptmRatio, dampingStrength: 0.2, gravityScale: 1, density: 1.2)
+        LiquidFun.setMaxParticlesForSystem(particleSystem, maxParticles: 1500)
 
         let screenSize: CGSize = UIScreen.main.bounds.size
         let screenWidth = Float(screenSize.width)
@@ -76,6 +77,14 @@ class ViewController: UIViewController {
         let displayLink = CADisplayLink(target: self, selector: #selector(ViewController.update))
         displayLink.preferredFramesPerSecond = 30
         displayLink.add(to: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
+
+        motionManager.startAccelerometerUpdates(to: OperationQueue(),
+                                       withHandler: { (accelerometerData, error) -> Void in
+                                           let acceleration = accelerometerData?.acceleration
+                                           let gravityX = self.gravity * Float((acceleration?.x)!)
+                                           let gravityY = self.gravity * Float((acceleration?.y)!)
+                                           LiquidFun.setGravity(Vector2D(x: gravityX, y: gravityY))
+        })
     }
 
     // Override this method to release any resources that can be recreated.
