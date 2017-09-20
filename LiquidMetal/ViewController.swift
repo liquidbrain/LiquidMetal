@@ -28,7 +28,6 @@ class ViewController: UIViewController {
     var uniformBuffer: MTLBuffer!
 
     var particleSystem: UnsafeMutableRawPointer!
-    var particleCount: Int = 0
 
     let gravity: Float = 9.80665
     let ptmRatio: Float = 32.0      // points-to-LiquidFun meters conversion ratio
@@ -58,9 +57,9 @@ class ViewController: UIViewController {
                                       size: Size2D(width: screenWidth / ptmRatio,
                                     height: screenHeight / ptmRatio))
 
-        createMetalLayer()
-        refreshVertexBuffer()
-        refreshUniformBuffer()
+        makeMetalLayer()
+        vertexBuffer = ShaderBuffers.makeVertexBuffer(device: device, particleSystem: particleSystem)
+        uniformBuffer = ShaderBuffers.makeUniformBuffer(device: device, particleRadius: particleRadius, ptmRatio: ptmRatio)
         buildRenderPipeline()
 
         render()
@@ -88,7 +87,7 @@ class ViewController: UIViewController {
         LiquidFun.destroyWorld()
     }
 
-    func createMetalLayer() {
+    func makeMetalLayer() {
         device = MTLCreateSystemDefaultDevice()
 
         metalLayer = CAMetalLayer()             // a layer that manages a pool of Metal drawables
@@ -98,43 +97,6 @@ class ViewController: UIViewController {
         metalLayer.frame = view.layer.frame
         
         view.layer.addSublayer(metalLayer)
-    }
-
-    func refreshVertexBuffer () {
-        particleCount = Int(LiquidFun.particleCount(forSystem: particleSystem))
-
-        let positions = LiquidFun.particlePositions(forSystem: particleSystem)
-        let bufferSize = MemoryLayout<Float>.size * particleCount * 2
-
-        vertexBuffer = device.makeBuffer(bytes: positions!, length: bufferSize, options: [])
-    }
-
-    func refreshUniformBuffer () {
-        // Create the orthographic projection matrix using normalized device coordinates
-        // (for near and far).
-        let screenSize: CGSize = UIScreen.main.bounds.size
-        let screenWidth = Float(screenSize.width)
-        let screenHeight = Float(screenSize.height)
-        let ndcMatrix = createOrthographicMatrix(left: 0, right: screenWidth,
-                                                bottom: 0, top: screenHeight,
-                                                near: -1, far: 1)
-
-        // Calculate the size of the Uniforms struct (from Shaders.metal) in memory.
-        let floatSize = MemoryLayout<Float>.size
-        let float4x4ByteAlignment = floatSize * 4
-        let float4x4Size = floatSize * 16   // ndcMatrix
-        let otherFloatsSize = floatSize * 2 // ptmRatio and pointSize
-        let paddingBytesSize = float4x4ByteAlignment - otherFloatsSize
-        let uniformsStructSize = float4x4Size + otherFloatsSize + paddingBytesSize
-
-        // Create the uniform buffer and copy the contents of each data member.
-        uniformBuffer = device.makeBuffer(length: uniformsStructSize, options: [])
-        let bufferPointer = uniformBuffer.contents()
-        var ptmRatioRW = ptmRatio               // make copies of constants for memcpy
-        var particleRadiusRW = particleRadius
-        memcpy(bufferPointer, ndcMatrix, float4x4Size)
-        memcpy(bufferPointer + float4x4Size, &ptmRatioRW, floatSize)
-        memcpy(bufferPointer + float4x4Size + floatSize, &particleRadiusRW, floatSize)
     }
 
     func buildRenderPipeline() {
@@ -183,6 +145,7 @@ class ViewController: UIViewController {
         renderEncoder.setVertexBuffer(uniformBuffer, offset: 0, at: 1)
 
         // Tell the GPU to draw some points.
+        let particleCount = Int(LiquidFun.particleCount(forSystem: particleSystem)) // TODO: Make this safer?
         renderEncoder.drawPrimitives(type: .point, vertexStart: 0, vertexCount: particleCount, instanceCount: 1)
         renderEncoder.endEncoding()
 
@@ -194,31 +157,10 @@ class ViewController: UIViewController {
     func update(displayLink:CADisplayLink) {
         autoreleasepool {
             LiquidFun.worldStep(displayLink.duration, velocityIterations: 8, positionIterations: 3)
-            refreshVertexBuffer()
+            //refreshVertexBuffer()
+            vertexBuffer = ShaderBuffers.makeVertexBuffer(device: device, particleSystem: particleSystem)
             render()
         }
-    }
-
-    // Creates an orthographic projection matrix (per the OpenGL library), using the following arguments:
-    // left, right: The left-and-rightmost x-coordinates of the screen (points).
-    //              left should be 0 and right should be the screen’s width in points.
-    // bottom, top: The bottom-most and top-most y-coordinates of the screen.
-    //              bottom should be 0 and top should be the screen height in points.
-    // near, far: The nearest and farthest z-coordinates.
-    //            Pass in near and far values of -1 to 1 in order to create the 0 to 1 range of
-    //            z-coordinates that Metal expects.
-    func createOrthographicMatrix(left: Float, right: Float, bottom: Float, top: Float, near: Float, far: Float) -> [Float] {
-        let ral = right + left
-        let rsl = right - left
-        let tab = top + bottom
-        let tsb = top - bottom
-        let fan = far + near
-        let fsn = far - near
-
-        return [2.0 / rsl, 0.0, 0.0, 0.0,
-                0.0, 2.0 / tsb, 0.0, 0.0,
-                0.0, 0.0, -2.0 / fsn, 0.0,
-                -ral / rsl, -tab / tsb, -fan / fsn, 1.0]
     }
 
     func printParticleInfo() {
