@@ -6,6 +6,10 @@ project.xcworkspace/
 xcuserdata/
 *.xcuserstate
 
+# Xcode Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
 # AppCode
 .idea/
 
