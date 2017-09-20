@@ -1,6 +1,11 @@
+# macOS
+.DS_Store
+
 # Xcode
+project.xcworkspace/
+xcuserdata/
 *.xcuserstate
 
 # AppCode
-.idea
+.idea/
 
