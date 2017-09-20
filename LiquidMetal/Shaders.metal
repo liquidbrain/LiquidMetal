@@ -6,6 +6,8 @@
 //  Copyright © 2017 John Koszarek. All rights reserved.
 //
 
+// TODO: Investigate using SIMD structures (e.g., vectors).
+
 #include <metal_stdlib>
 
 using namespace metal;
