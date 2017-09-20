@@ -24,8 +24,8 @@ class ViewController: UIViewController {
     // Ordered list of command buffers for a Metal device to execute.
     var commandQueue: MTLCommandQueue!
 
-    var vertexBuffer: MTLBuffer!
-    var uniformBuffer: MTLBuffer!
+    var vertexBuffer: MTLBuffer?
+    var uniformBuffer: MTLBuffer?
 
     var particleSystem: UnsafeMutableRawPointer!
 
