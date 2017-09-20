@@ -145,8 +145,7 @@ class ViewController: UIViewController {
         renderEncoder.setVertexBuffer(uniformBuffer, offset: 0, at: 1)
 
         // Tell the GPU to draw some points.
-        let particleCount = Int(LiquidFun.particleCount(forSystem: particleSystem)) // TODO: Make this safer?
-        renderEncoder.drawPrimitives(type: .point, vertexStart: 0, vertexCount: particleCount, instanceCount: 1)
+        renderEncoder.drawPrimitives(type: .point, vertexStart: 0, vertexCount: ShaderBuffers.vertexCount, instanceCount: 1)
         renderEncoder.endEncoding()
 
         // Commits the command buffer for execution as soon as possible.
@@ -157,7 +156,6 @@ class ViewController: UIViewController {
     func update(displayLink:CADisplayLink) {
         autoreleasepool {
             LiquidFun.worldStep(displayLink.duration, velocityIterations: 8, positionIterations: 3)
-            //refreshVertexBuffer()
             vertexBuffer = ShaderBuffers.makeVertexBuffer(device: device, particleSystem: particleSystem)
             render()
         }

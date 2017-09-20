@@ -11,11 +11,13 @@ import Metal
 
 class ShaderBuffers {
 
+    static var vertexCount = 0
+
     class func makeVertexBuffer(device: MTLDevice!, particleSystem: UnsafeMutableRawPointer!) -> MTLBuffer! {
-        let particleCount = Int(LiquidFun.particleCount(forSystem: particleSystem))
+        vertexCount = Int(LiquidFun.particleCount(forSystem: particleSystem))
         
         let positions = LiquidFun.particlePositions(forSystem: particleSystem)
-        let bufferSize = MemoryLayout<Float>.size * particleCount * 2
+        let bufferSize = MemoryLayout<Float>.size * vertexCount * 2
         
         let vertexBuffer = device.makeBuffer(bytes: positions!, length: bufferSize, options: [])
         
