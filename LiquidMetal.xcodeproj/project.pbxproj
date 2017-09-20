@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		31DD0B9AD0CCAA4BAA59E1B0 /* Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31DD04DED42D9E0207C1F1D8 /* Math.swift */; };
+		31DD0D14973937EA19349BBD /* ShaderBuffers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31DD0C34D5428832AC7E655C /* ShaderBuffers.swift */; };
 		525C47BD1F5E197C00E6D2C4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525C47BC1F5E197C00E6D2C4 /* AppDelegate.swift */; };
 		525C47BF1F5E197C00E6D2C4 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525C47BE1F5E197C00E6D2C4 /* ViewController.swift */; };
 		525C47C21F5E197C00E6D2C4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 525C47C01F5E197C00E6D2C4 /* Main.storyboard */; };
@@ -70,6 +72,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		31DD04DED42D9E0207C1F1D8 /* Math.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Math.swift; sourceTree = "<group>"; };
+		31DD0C34D5428832AC7E655C /* ShaderBuffers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShaderBuffers.swift; sourceTree = "<group>"; };
 		525C47B91F5E197C00E6D2C4 /* LiquidMetal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LiquidMetal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		525C47BC1F5E197C00E6D2C4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		525C47BE1F5E197C00E6D2C4 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -235,6 +239,8 @@
 				525C49181F60C6A500E6D2C4 /* LiquidFun.mm */,
 				525C491A1F60C76700E6D2C4 /* BridgingHeader.h */,
 				525C491B1F689D3200E6D2C4 /* Shaders.metal */,
+				31DD04DED42D9E0207C1F1D8 /* Math.swift */,
+				31DD0C34D5428832AC7E655C /* ShaderBuffers.swift */,
 			);
 			path = LiquidMetal;
 			sourceTree = "<group>";
@@ -551,6 +557,8 @@
 				525C48F61F5E19A200E6D2C4 /* b2Fixture.cpp in Sources */,
 				525C48A21F5E19A200E6D2C4 /* b2DynamicTree.cpp in Sources */,
 				525C48F91F5E19A200E6D2C4 /* b2WorldCallbacks.cpp in Sources */,
+				31DD0B9AD0CCAA4BAA59E1B0 /* Math.swift in Sources */,
+				31DD0D14973937EA19349BBD /* ShaderBuffers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
