@@ -51,7 +51,7 @@ class ViewController: UIViewController {
 
         LiquidFun.createParticleBox(forSystem: particleSystem,
                                     position: Vector2D(x: screenWidth * 0.5 / ptmRatio, y: screenHeight * 0.5 / ptmRatio),
-                                    size: Size2D(width: 50 / ptmRatio, height: 50 / ptmRatio))
+                                    size: Size2D(width: 75 / ptmRatio, height: 75 / ptmRatio))
 
         LiquidFun.createEdgeBox(withOrigin: Vector2D(x: 0, y: 0),
                                       size: Size2D(width: screenWidth / ptmRatio,
@@ -102,7 +102,7 @@ class ViewController: UIViewController {
     func buildRenderPipeline() {
         // Get access to the fragment and vertext shaders (.metal files in an Xcode project are
         // compiled and built into a single default library).
-        let defaultLibrary = device.newDefaultLibrary()
+        let defaultLibrary = device.makeDefaultLibrary()
         let vertexProgram = defaultLibrary?.makeFunction(name: "particle_vertex")
         let fragmentProgram = defaultLibrary?.makeFunction(name: "basic_fragment")
 
@@ -137,23 +137,23 @@ class ViewController: UIViewController {
 
         // Create the commands that will be committed to and executed by the GPU.
         let commandBuffer = commandQueue.makeCommandBuffer()
-        let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)
+        let renderEncoder = commandBuffer?.makeRenderCommandEncoder(descriptor: renderPassDescriptor)
 
         // Set the pipeline state and vertex/uniform buffers to use.
-        renderEncoder.setRenderPipelineState(pipelineState)
-        renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, at: 0)
-        renderEncoder.setVertexBuffer(uniformBuffer, offset: 0, at: 1)
+        renderEncoder?.setRenderPipelineState(pipelineState)
+        renderEncoder?.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+        renderEncoder?.setVertexBuffer(uniformBuffer, offset: 0, index: 1)
 
         // Tell the GPU to draw some points.
-        renderEncoder.drawPrimitives(type: .point, vertexStart: 0, vertexCount: ShaderBuffers.vertexCount, instanceCount: 1)
-        renderEncoder.endEncoding()
+        renderEncoder?.drawPrimitives(type: .point, vertexStart: 0, vertexCount: ShaderBuffers.vertexCount, instanceCount: 1)
+        renderEncoder?.endEncoding()
 
         // Commits the command buffer for execution as soon as possible.
-        commandBuffer.present(drawable!)
-        commandBuffer.commit()
+        commandBuffer?.present(drawable!)
+        commandBuffer?.commit()
     }
 
-    func update(displayLink:CADisplayLink) {
+    @objc func update(displayLink:CADisplayLink) {
         autoreleasepool {
             LiquidFun.worldStep(displayLink.duration, velocityIterations: 8, positionIterations: 3)
             vertexBuffer = ShaderBuffers.makeVertexBuffer(device: device, particleSystem: particleSystem)
@@ -169,7 +169,7 @@ class ViewController: UIViewController {
 
         for i in 0..<count {
             let position = positions[i]
-            print("particle: \(i) position: (\(position.x), \(position.y))")
+            print("Particle \(i) position: (\(position.x), \(position.y))")
         }
     }
 
@@ -179,6 +179,14 @@ class ViewController: UIViewController {
             let touchLocation = touch.location(in: view)
             let position = Vector2D(x: Float(touchLocation.x) / ptmRatio,
                                     y: Float(view.bounds.height - touchLocation.y) / ptmRatio)
+
+            let touchRadius = (Float)(touch.majorRadius)
+            print("Touch radius = \(touchRadius)")
+            let touchRadius2 = touchRadius / ptmRatio
+            print("Touch radius / ptmRatio = \(touchRadius2)")
+            let width = 100 / ptmRatio
+             print("Width = \(width)")
+
             let size = Size2D(width: 100 / ptmRatio, height: 100 / ptmRatio)
             LiquidFun.createParticleBox(forSystem: particleSystem, position: position, size: size)
             super.touchesBegan(touches, with: event)
