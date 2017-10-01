@@ -42,15 +42,19 @@ class ShaderBuffers {
         let paddingBytesSize = float4x4ByteAlignment - otherFloatsSize
         let uniformsStructSize = float4x4Size + otherFloatsSize + paddingBytesSize
         
-        // Create the uniform buffer and copy the contents of each data member.
+        // Create the uniform buffer.
         let uniformBuffer = device.makeBuffer(length: uniformsStructSize, options: [])
-        let bufferPointer = uniformBuffer.contents()
-        var ptmRatioRW = ptmRatio               // make copies of constants for memcpy
-        var particleRadiusRW = particleRadius
-        memcpy(bufferPointer, ndcMatrix, float4x4Size)
-        memcpy(bufferPointer + float4x4Size, &ptmRatioRW, floatSize)
-        memcpy(bufferPointer + float4x4Size + floatSize, &particleRadiusRW, floatSize)
-        
+
+        // Copy the contents of the Uniform struct data members ??? to the unform buffer.
+        if uniformBuffer != nil {
+            let bufferPointer = uniformBuffer!.contents()   // pointer to the shared copy of the buffer data
+            var ptmRatioRW = ptmRatio                       // make copy of pmtRatio constant for memcpy
+            var particleRadiusRW = particleRadius           // make copy of particleRadius constant for memcpy
+            memcpy(bufferPointer, ndcMatrix, float4x4Size)
+            memcpy(bufferPointer + float4x4Size, &ptmRatioRW, floatSize)
+            memcpy(bufferPointer + float4x4Size + floatSize, &particleRadiusRW, floatSize)
+        }
+
         return uniformBuffer;
     }
 }
