@@ -51,7 +51,7 @@ class ViewController: UIViewController {
 
         LiquidFun.createParticleBox(forSystem: particleSystem,
                                     position: Vector2D(x: screenWidth * 0.5 / ptmRatio, y: screenHeight * 0.5 / ptmRatio),
-                                    size: Size2D(width: 75 / ptmRatio, height: 75 / ptmRatio))
+                                    size: Size2D(width: 45 / ptmRatio, height: 45 / ptmRatio))
 
         LiquidFun.createEdgeBox(withOrigin: Vector2D(x: 0, y: 0),
                                       size: Size2D(width: screenWidth / ptmRatio,
@@ -180,14 +180,8 @@ class ViewController: UIViewController {
             let position = Vector2D(x: Float(touchLocation.x) / ptmRatio,
                                     y: Float(view.bounds.height - touchLocation.y) / ptmRatio)
 
-            let touchRadius = (Float)(touch.majorRadius)
-            print("Touch radius = \(touchRadius)")
-            let touchRadius2 = touchRadius / ptmRatio
-            print("Touch radius / ptmRatio = \(touchRadius2)")
-            let width = 100 / ptmRatio
-             print("Width = \(width)")
-
-            let size = Size2D(width: 100 / ptmRatio, height: 100 / ptmRatio)
+            let touchDiameter = (Float)(touch.majorRadius) * 2.0;
+            let size = Size2D(width: touchDiameter / ptmRatio, height: touchDiameter / ptmRatio)
             LiquidFun.createParticleBox(forSystem: particleSystem, position: position, size: size)
             super.touchesBegan(touches, with: event)
         }
