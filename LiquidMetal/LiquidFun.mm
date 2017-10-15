@@ -116,4 +116,14 @@ static b2World* world = nil;
     world->Step(timeStep, velocityIterations, positionIterations);
 }
 
++ (void)destroyParticlesForSystem:(void*)particleSystem
+{
+
+    b2ParticleGroup* particleGroup = ((b2ParticleSystem*)particleSystem)->GetParticleGroupList();
+    while (particleGroup != nil) {
+        particleGroup->DestroyParticles();
+        particleGroup = particleGroup->GetNext();
+    }
+}
+
 @end

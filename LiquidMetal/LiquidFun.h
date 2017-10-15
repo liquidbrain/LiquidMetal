@@ -86,4 +86,6 @@ typedef struct Size2D {
 + (void)worldStep:(CFTimeInterval)timeStep velocityIterations:(int)velocityIterations
                                            positionIterations:(int)positionIterations;
 
++ (void)destroyParticlesForSystem:(void*)particleSystem;
+
 @end
