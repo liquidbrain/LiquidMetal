@@ -10,7 +10,7 @@ import UIKit
 import Metal
 import CoreMotion
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UIGestureRecognizerDelegate {
 
     // The interface to a single GPU.
     var device: MTLDevice!
@@ -30,10 +30,17 @@ class ViewController: UIViewController {
     var particleSystem: UnsafeMutableRawPointer!
 
     let gravity: Float = 9.80665
-    let ptmRatio: Float = 32.0      // points-to-LiquidFun meters conversion ratio
-    let particleRadius: Float = 9   // particle radius (in points)
+    let ptmRatio: Float = 32.0                                      // points-to-LiquidFun meters ratio
+    let particleRadius: Float = 9                                   // particle radius (in points)
+    let particleBoxSize = Size2D(width: 1.40625, height: 1.40625)   // 45 (a nice width in points) / ptmRatio
 
-    let motionManager: CMMotionManager = CMMotionManager()
+    let clearColor = MTLClearColor(red: 25.0/255.0, green: 150.0/255.0, blue: 195.0/255.0, alpha: 1.0)
+
+    var tapGesture: UITapGestureRecognizer!
+    var doubleTapGesture: UITapGestureRecognizer!
+    var longPressGesture: UILongPressGestureRecognizer!
+
+    let motionManager = CMMotionManager()
 
     // This method is called after the view controller has loaded its view hierarchy into memory.
     override func viewDidLoad() {
@@ -51,7 +58,7 @@ class ViewController: UIViewController {
 
         LiquidFun.createParticleBox(forSystem: particleSystem,
                                     position: Vector2D(x: screenWidth * 0.5 / ptmRatio, y: screenHeight * 0.5 / ptmRatio),
-                                    size: Size2D(width: 45 / ptmRatio, height: 45 / ptmRatio))
+                                    size: particleBoxSize)
 
         LiquidFun.createEdgeBox(withOrigin: Vector2D(x: 0, y: 0),
                                       size: Size2D(width: screenWidth / ptmRatio,
@@ -67,6 +74,19 @@ class ViewController: UIViewController {
         let displayLink = CADisplayLink(target: self, selector: #selector(ViewController.update))
         displayLink.preferredFramesPerSecond = 30
         displayLink.add(to: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
+
+        tapGesture = UITapGestureRecognizer(target: self, action: #selector(ViewController.handleTap(gestureRecognizer:)))
+        tapGesture.delegate = self
+        view.addGestureRecognizer(tapGesture)
+
+        //doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(ViewController.handleDoubleTap(gestureRecognizer:)))
+        //doubleTapGesture.numberOfTapsRequired = 2
+        //doubleTapGesture.delegate = self
+        //view.addGestureRecognizer(doubleTapGesture)
+
+        longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(ViewController.handleLongPress(gestureRecognizer:)))
+        longPressGesture.delegate = self
+        view.addGestureRecognizer(longPressGesture)
 
         motionManager.startAccelerometerUpdates(to: OperationQueue(),
                                        withHandler: { (accelerometerData, error) -> Void in
@@ -127,13 +147,11 @@ class ViewController: UIViewController {
     func render() {
         let drawable = metalLayer.nextDrawable()
 
-        // Clear the screen to green.
+        // Clear the screen to a color.
         let renderPassDescriptor = MTLRenderPassDescriptor()
         renderPassDescriptor.colorAttachments[0].texture = drawable?.texture
         renderPassDescriptor.colorAttachments[0].loadAction = .clear
-        renderPassDescriptor.colorAttachments[0].storeAction = .store
-        renderPassDescriptor.colorAttachments[0].clearColor =
-            MTLClearColor(red: 0.0, green: 104.0/255.0, blue: 5.0/255.0, alpha: 1.0)
+        renderPassDescriptor.colorAttachments[0].clearColor = clearColor
 
         // Create the commands that will be committed to and executed by the GPU.
         let commandBuffer = commandQueue.makeCommandBuffer()
@@ -153,11 +171,36 @@ class ViewController: UIViewController {
         commandBuffer?.commit()
     }
 
+    func clearScreen()
+    {
+        let drawable = metalLayer.nextDrawable()
+
+        // Clear the screen to a color.
+        let renderPassDescriptor = MTLRenderPassDescriptor()
+        renderPassDescriptor.colorAttachments[0].texture = drawable?.texture
+        renderPassDescriptor.colorAttachments[0].loadAction = .clear
+        renderPassDescriptor.colorAttachments[0].clearColor = clearColor
+
+        // Create the commands that will be committed to and executed by the GPU.
+        let commandBuffer = commandQueue.makeCommandBuffer()
+        let renderEncoder = commandBuffer?.makeRenderCommandEncoder(descriptor: renderPassDescriptor)
+        renderEncoder?.endEncoding()
+
+        // Commits the command buffer for execution as soon as possible.
+        commandBuffer?.present(drawable!)
+        commandBuffer?.commit()
+    }
+
     @objc func update(displayLink:CADisplayLink) {
         autoreleasepool {
             LiquidFun.worldStep(displayLink.duration, velocityIterations: 8, positionIterations: 3)
-            vertexBuffer = ShaderBuffers.makeVertexBuffer(device: device, particleSystem: particleSystem)
-            render()
+            if (LiquidFun.particleCount(forSystem: particleSystem) > 0) {
+                vertexBuffer = ShaderBuffers.makeVertexBuffer(device: device, particleSystem: particleSystem)
+                render()
+            }
+            else {
+                clearScreen()
+            }
         }
     }
 
@@ -173,17 +216,34 @@ class ViewController: UIViewController {
         }
     }
 
-    // Tells this object that one or more new touches occurred in a view.
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for touch in touches {
-            let touchLocation = touch.location(in: view)
-            let position = Vector2D(x: Float(touchLocation.x) / ptmRatio,
-                                    y: Float(view.bounds.height - touchLocation.y) / ptmRatio)
+    @objc func handleTap(gestureRecognizer: UITapGestureRecognizer) {
+        let touchLocation = gestureRecognizer.location(in: view)
+        let position = Vector2D(x: Float(touchLocation.x) / ptmRatio,
+                                y: Float(view.bounds.height - touchLocation.y) / ptmRatio)
 
-            let touchDiameter = (Float)(touch.majorRadius) * 2.0;
-            let size = Size2D(width: touchDiameter / ptmRatio, height: touchDiameter / ptmRatio)
-            LiquidFun.createParticleBox(forSystem: particleSystem, position: position, size: size)
-            super.touchesBegan(touches, with: event)
-        }
+        LiquidFun.createParticleBox(forSystem: particleSystem, position: position, size: particleBoxSize)
     }
+
+    @objc func handleDoubleTap(gestureRecognizer: UITapGestureRecognizer) {
+        // Note we're not currently using UITapGestureRecognizer doubleTapGesture because we'd need the
+        // double tap gesture to fail before a single tap is regcognized; this made the single tap to
+        // create a new particle box feel sluggish.
+        print("Double tap")
+    }
+
+    @objc func handleLongPress(gestureRecognizer: UILongPressGestureRecognizer) {
+        LiquidFun.destroyParticles(forSystem: particleSystem);
+    }
+
+    /*
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                           shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        // Don't recognize a single tap until a double-tap fails; this prevents a double-tap from being
+        // recorded as both a single and a double tap.
+        if gestureRecognizer == tapGesture && otherGestureRecognizer == doubleTapGesture {
+            return true
+        }
+        return false
+    }
+    */
 }
