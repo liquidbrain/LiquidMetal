@@ -1,12 +1,8 @@
 //
-//  Math.swift
-//  LiquidMetal
-//
 //  Created by John Koszarek on 9/20/17.
-//  Copyright © 2017 John Koszarek. All rights reserved.
 //
 
-class Math {
+final class Math {
 
     // Creates an orthographic projection matrix (per the OpenGL library), using the following arguments:
     // left, right: The left-and-rightmost x-coordinates of the screen (points).
