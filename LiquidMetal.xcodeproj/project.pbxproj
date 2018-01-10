@@ -239,8 +239,8 @@
 				525C49181F60C6A500E6D2C4 /* LiquidFun.mm */,
 				525C491A1F60C76700E6D2C4 /* BridgingHeader.h */,
 				525C491B1F689D3200E6D2C4 /* Shaders.metal */,
-				31DD04DED42D9E0207C1F1D8 /* Math.swift */,
 				31DD0C34D5428832AC7E655C /* ShaderBuffers.swift */,
+				31DD04DED42D9E0207C1F1D8 /* Math.swift */,
 			);
 			path = LiquidMetal;
 			sourceTree = "<group>";
@@ -705,7 +705,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = Ouroboros.LiquidMetal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = LiquidMetal/BridgingHeader.h;
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
@@ -721,7 +721,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = Ouroboros.LiquidMetal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = LiquidMetal/BridgingHeader.h;
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
