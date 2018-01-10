@@ -1,7 +1,4 @@
 //
-//  BridgingHeader.h
-//  LiquidMetal
-//
 //  Any Objective-C headers exposed in this bridging header can be used directly in any Swift source
 //  file in your project. In addition, you can interact with your Objective-C code using Swift syntax.
 //
