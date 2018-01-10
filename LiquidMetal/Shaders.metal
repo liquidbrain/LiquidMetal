@@ -1,12 +1,10 @@
 //
-//  Shaders.metal
-//  LiquidMetal
+//  Vertext and fragment shaders.
+//  The vertex shader converts from LiquidFun's coordinate system to Metal's normalized coordinate system.
+//  The fragment shader returns the color of a LiquidFun particle.
 //
 //  Created by John Koszarek on 9/12/17.
-//  Copyright © 2017 John Koszarek. All rights reserved.
 //
-
-// TODO: Investigate using SIMD structures (e.g., vectors).
 
 #include <metal_stdlib>
 
@@ -23,11 +21,12 @@ struct Uniforms {
     float pointSize;
 };
 
-// Receives the vertex’s position in LiquidFun’s coordinate system, then converts it to Metal’s
-// coordinate system and outputs it via vertexOut.
+// Receives the vertex’s position in LiquidFun’s coordinate system and converts it to Metal’s coordinate
+// system.
 // For example:
-// LiquidFun world co-ords might be 10 x 17.75 LiquidFun units (meters), with the origin at the lower right-hand corner.
-// Screen co-ords might be 320 x 568 points, with the origin at the lower right-hand corner.
+// LiquidFun world co-ords might be 10 x 17.75 LiquidFun units (meters), with the origin at the lower
+// left-hand corner.
+// Screen co-ords might be 320 x 568 points, with the origin at the lower left-hand corner.
 // Normalized device co-ords will be -1 x 1, with the origin in the center.
 vertex VertexOut particle_vertex(const device packed_float2* vertex_array [[buffer(0)]],
                                  const device Uniforms& uniforms [[buffer(1)]],
@@ -41,7 +40,7 @@ vertex VertexOut particle_vertex(const device packed_float2* vertex_array [[buff
     return vertexOut;
 }
 
-// Returns the color white as a 4-component vector with 16-bit floating-point values.
+// Returns the color used for each particle as a 4-component vector with 16-bit floating-point values.
 fragment half4 basic_fragment() {
-    return half4(1.0);
+    return half4(189.0/255.0, 193.0/255.0, 192.0/255.0, 1.0);   // light storm gray
 }
