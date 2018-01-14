@@ -60,12 +60,12 @@ final class Engine {
           screenHeight: Float,
           physicsWorldDefinition: PhysicsWorldDefinition,
           particleSystemDefinition: ParticleSystemDefinition,
-          initialBackgroundColor: MTLClearColor) {
+          backgroundColor: MTLClearColor) {
         self.screenWidth = screenWidth
         self.screenHeight = screenHeight
         self.physicsWorldDefinition = physicsWorldDefinition
         self.particleSystemDefinition = particleSystemDefinition
-        self.backgroundColor = initialBackgroundColor
+        self.backgroundColor = backgroundColor
 
         // Create the Metal device which serves as the interface to a single GPU.
         let md = MTLCreateSystemDefaultDevice()
@@ -231,7 +231,7 @@ final class Engine {
         commandBuffer?.commit()
     }
 
-    func clearScreen() {
+    func clearViewToBackgroundColor() {
         // Get a Metal drawable.
         let drawable = metalLayer.nextDrawable()
         guard drawable != nil else {
