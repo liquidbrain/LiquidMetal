@@ -25,10 +25,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     var engine: Engine!
 
     // Allows the app to synchronize its drawing to the refresh rate of the display.
-    var coreAnimationDisplayLink: CADisplayLink!
+    var coreAnimationDisplayLink: CADisplayLink?
 
     // Allows access to accelerometer data, rotation-rate data, magnetometer data, etc.
-    var motionManager: CMMotionManager!
+    var motionManager: CMMotionManager?
 
     var tapGesture: UITapGestureRecognizer!
     var doubleTapGesture: UITapGestureRecognizer!
@@ -55,14 +55,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                         screenHeight: screenHeight,
                         physicsWorldDefinition: physicsWorldDef,
                         particleSystemDefinition: particleSystemDef,
-                        initialBackgroundColor: backgroundColor)
+                        backgroundColor: backgroundColor)
         guard engine != nil else {
             return
         }
-
-        let displayLink = CADisplayLink(target: self, selector: #selector(ViewController.update))
-        displayLink.preferredFramesPerSecond = 30
-        displayLink.add(to: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
 
         tapGesture = UITapGestureRecognizer(target: self, action: #selector(ViewController.handleTap(gestureRecognizer:)))
         tapGesture.delegate = self
@@ -77,14 +73,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         longPressGesture.delegate = self
         view.addGestureRecognizer(longPressGesture)
 
-        motionManager = CMMotionManager()
-        motionManager.startAccelerometerUpdates(to: OperationQueue(),
-                                                withHandler: { (accelerometerData, error) -> Void in
-                                                    let acceleration = accelerometerData?.acceleration
-                                                    let gravityX = ViewController.gravity * Float((acceleration?.x)!)
-                                                    let gravityY = ViewController.gravity * Float((acceleration?.y)!)
-                                                    LiquidFun.setGravity(Vector2D(x: gravityX, y: gravityY))
-        })
+        startUpdateServices()
     }
 
     // Override this method to release any resources that can be recreated.
@@ -93,19 +82,49 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     }
 
     deinit {
-        motionManager.stopAccelerometerUpdates()    // stops accelerometer updates
-        coreAnimationDisplayLink.invalidate()       // removes the display link from all run loops
+        stopUpdateServices()
+    }
+
+    func startUpdateServices() {
+        if coreAnimationDisplayLink == nil {
+            coreAnimationDisplayLink = CADisplayLink(target: self, selector: #selector(ViewController.updateView))
+            coreAnimationDisplayLink?.preferredFramesPerSecond = 30
+            coreAnimationDisplayLink?.add(to: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
+        }
+
+        if motionManager == nil {
+            motionManager = CMMotionManager()
+            motionManager?.startAccelerometerUpdates(to: OperationQueue(),
+                                                     withHandler: { (accelerometerData, error) -> Void in
+                                                         let acceleration = accelerometerData?.acceleration
+                                                         let gravityX = ViewController.gravity * Float((acceleration?.x)!)
+                                                         let gravityY = ViewController.gravity * Float((acceleration?.y)!)
+                                                         LiquidFun.setGravity(Vector2D(x: gravityX, y: gravityY))
+            })
+        }
+    }
+
+    func stopUpdateServices() {
+        if motionManager != nil {
+            motionManager?.stopAccelerometerUpdates()   // stops accelerometer updates
+            motionManager = nil
+        }
+        if coreAnimationDisplayLink != nil {
+            coreAnimationDisplayLink?.invalidate()      // removes the display link from all run loops
+            coreAnimationDisplayLink = nil
+        }
     }
 
     @objc
-    func update(displayLink:CADisplayLink) {
+    func updateView(displayLink:CADisplayLink) {
+        //os_log("Update view", log: OSLog.default, type: .debug)
         autoreleasepool {
             engine.physicsWorldStep(timeStep: displayLink.duration, velocityIterations: 8, positionIterations: 3)
             if (engine.particleCount() > 0) {
                 engine.drawParticles()
             }
             else {
-                engine.clearScreen()
+                engine.clearViewToBackgroundColor()
             }
         }
     }
