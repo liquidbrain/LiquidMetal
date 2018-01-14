@@ -12,9 +12,10 @@ import os.log
 
 class ViewController: UIViewController, UIGestureRecognizerDelegate {
 
-    static let gravity: Float = 9.80665     // standard (earth) gravity
-    static let ptmRatio: Float = 32.0       // points-to-LiquidFun meters ratio
-    static let particleBoxSize = Size2D(width: 1.40625, height: 1.40625)
+    static let gravity: Float = 9.80665                 // standard (earth) gravity
+    static let ptmRatio: Float = 32.0                   // points-to-LiquidFun meters ratio
+    static let particleBoxDimension: Float = 1.46875    // 47 points / ptmRatio
+    static let particleBoxSize = Size2D(width: particleBoxDimension, height: particleBoxDimension)
 
     //let backgroundColor = MTLClearColor(red: 55.0/255.0, green: 75.0/255.0, blue: 64.0/255.0, alpha: 1.0)    // storm gray-green
     //let backgroundColor = MTLClearColor(red: 64.0/255.0, green: 75.0/255.0, blue: 79.0/255.0, alpha: 1.0)    // storm gray
