@@ -12,11 +12,9 @@ import os.log
 
 class ViewController: UIViewController, UIGestureRecognizerDelegate {
 
-    let gravity: Float = 9.80665
-    let ptmRatio: Float = 32.0                                       // points-to-LiquidFun meters ratio
-    let particleRadius: Float = 2                                    // particle radius (in points)
-    let particleBoxSize = Size2D(width: 1.40625, height: 1.40625)    // 45 (a nice width in points) / ptmRatio
-    let maxParticles: Int32 = 4500
+    static let gravity: Float = 9.80665     // standard (earth) gravity
+    static let ptmRatio: Float = 32.0       // points-to-LiquidFun meters ratio
+    static let particleBoxSize = Size2D(width: 1.40625, height: 1.40625)
 
     //let backgroundColor = MTLClearColor(red: 55.0/255.0, green: 75.0/255.0, blue: 64.0/255.0, alpha: 1.0)    // storm gray-green
     //let backgroundColor = MTLClearColor(red: 64.0/255.0, green: 75.0/255.0, blue: 79.0/255.0, alpha: 1.0)    // storm gray
@@ -44,7 +42,20 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         let screenWidth = Float(screenSize.width)
         let screenHeight = Float(screenSize.height)
 
-        engine = Engine(view: view!, screenWidth: screenWidth, screenHeight: screenHeight, initialBackgroundColor: backgroundColor)
+        let physicsWorldDef = PhysicsWorldDefinition(gravity: ViewController.gravity,
+                                                     ptmRatio: ViewController.ptmRatio)
+        let particleSystemDef = ParticleSystemDefinition(radiusInPoints: 2.0,
+                                                         boxSize: ViewController.particleBoxSize,
+                                                         dampingStrength: 0.2,
+                                                         density: 1.2,
+                                                         maxParticles: 4500)
+
+        engine = Engine(view: view!,
+                        screenWidth: screenWidth,
+                        screenHeight: screenHeight,
+                        physicsWorldDefinition: physicsWorldDef,
+                        particleSystemDefinition: particleSystemDef,
+                        initialBackgroundColor: backgroundColor)
         guard engine != nil else {
             return
         }
@@ -70,8 +81,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         motionManager.startAccelerometerUpdates(to: OperationQueue(),
                                                 withHandler: { (accelerometerData, error) -> Void in
                                                     let acceleration = accelerometerData?.acceleration
-                                                    let gravityX = self.gravity * Float((acceleration?.x)!)
-                                                    let gravityY = self.gravity * Float((acceleration?.y)!)
+                                                    let gravityX = ViewController.gravity * Float((acceleration?.x)!)
+                                                    let gravityY = ViewController.gravity * Float((acceleration?.y)!)
                                                     LiquidFun.setGravity(Vector2D(x: gravityX, y: gravityY))
         })
     }
@@ -104,10 +115,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         os_log("Handle tap", log: OSLog.default, type: .debug)
 
         let touchLocation = gestureRecognizer.location(in: view)
-        let position = Vector2D(x: Float(touchLocation.x) / Engine.ParticleSystem.ptmRatio,
-                                y: Float(view.bounds.height - touchLocation.y) / Engine.ParticleSystem.ptmRatio)
+        let position = Vector2D(x: Float(touchLocation.x) / ViewController.ptmRatio,
+                                y: Float(view.bounds.height - touchLocation.y) / ViewController.ptmRatio)
 
-        engine.createParticleBox(position: position, size: Engine.ParticleSystem.particleBoxSize)
+        engine.createParticleBox(position: position, size: Size2D(width: ViewController.particleBoxSize.width,
+                                                                  height: ViewController.particleBoxSize.height))
     }
 
     @objc
