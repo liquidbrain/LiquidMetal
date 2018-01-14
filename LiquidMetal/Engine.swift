@@ -7,17 +7,23 @@ import UIKit
 import Metal
 import os.log
 
+public struct PhysicsWorldDefinition {
+    var gravity: Float
+    var ptmRatio: Float         // points-to-LiquidFun meters ratio
+}
+
+struct ParticleSystemDefinition {
+    var radiusInPoints: Float
+    var boxSize: Size2D
+    var dampingStrength: Float  // reduces the velocity of particles over time
+    var density: Float          // particles mass
+    var maxParticles: Int32
+}
+
 /// Handles rendering and physics for the app, including the particle system.
 final class Engine {
 
-    // TODO: Make these modifiable, not constants
-    struct ParticleSystem {
-        static let gravity: Float = 9.80665
-        static let ptmRatio: Float = 32.0                                       // points-to-LiquidFun meters ratio
-        static let particleRadius: Float = 2                                    // particle radius (in points)
-        static let particleBoxSize = Size2D(width: 1.40625, height: 1.40625)    // 45 (a nice width in points) / ptmRatio
-        static let maxParticles: Int32 = 4500
-    }
+    static let particleSystemGravityScale: Float = 1.0
 
     /** The interface to a single GPU. */
     var metalDevice: MTLDevice!
@@ -41,14 +47,24 @@ final class Engine {
     /** The particle system. */
     var particleSystem: UnsafeMutableRawPointer?
 
+    var physicsWorldDefinition: PhysicsWorldDefinition
+    var particleSystemDefinition: ParticleSystemDefinition
+
     var screenWidth: Float
     var screenHeight: Float
 
     var backgroundColor: MTLClearColor
 
-    init?(view: UIView, screenWidth: Float, screenHeight: Float, initialBackgroundColor: MTLClearColor) {
+    init?(view: UIView,
+          screenWidth: Float,
+          screenHeight: Float,
+          physicsWorldDefinition: PhysicsWorldDefinition,
+          particleSystemDefinition: ParticleSystemDefinition,
+          initialBackgroundColor: MTLClearColor) {
         self.screenWidth = screenWidth
         self.screenHeight = screenHeight
+        self.physicsWorldDefinition = physicsWorldDefinition
+        self.particleSystemDefinition = particleSystemDefinition
         self.backgroundColor = initialBackgroundColor
 
         // Create the Metal device which serves as the interface to a single GPU.
@@ -75,8 +91,8 @@ final class Engine {
 
         // Create the buffer used for shader uniforms.
         uniformBuffer = ShaderBuffers.makeUniformBuffer(device: metalDevice,
-                                                        particleRadius: ParticleSystem.particleRadius,
-                                                        ptmRatio: ParticleSystem.ptmRatio)
+                                                        particleRadius: particleSystemDefinition.radiusInPoints,
+                                                        ptmRatio: physicsWorldDefinition.ptmRatio)
 
         // Get access to the fragment and vertext shaders (.metal files in an Xcode project are compiled
         // and built into a single default library).
@@ -104,7 +120,7 @@ final class Engine {
         // Create the physics world and the particle system.
         createPhysicsWorld()
         createParticleSystem()
-        setMaxParticles(maxParticles: ParticleSystem.maxParticles)
+        setMaxParticles(maxParticles: particleSystemDefinition.maxParticles)
     }
 
     deinit {
@@ -112,17 +128,17 @@ final class Engine {
     }
 
     private func createPhysicsWorld() {
-        LiquidFun.createWorld(withGravity: Vector2D(x: 0, y: -(ParticleSystem.gravity)))
+        LiquidFun.createWorld(withGravity: Vector2D(x: 0, y: -(physicsWorldDefinition.gravity)))
         LiquidFun.createEdgeBox(withOrigin: Vector2D(x: 0, y: 0),
-                                size: Size2D(width: screenWidth / ParticleSystem.ptmRatio,
-                                             height: screenHeight / ParticleSystem.ptmRatio))
+                                size: Size2D(width: screenWidth / physicsWorldDefinition.ptmRatio,
+                                             height: screenHeight / physicsWorldDefinition.ptmRatio))
     }
 
     private func createParticleSystem() {
-        particleSystem = LiquidFun.createParticleSystem(withRadius: ParticleSystem.particleRadius / ParticleSystem.ptmRatio,
-                                                        dampingStrength: 0.2,
-                                                        gravityScale: 1,
-                                                        density: 1.2)
+        particleSystem = LiquidFun.createParticleSystem(withRadius: particleSystemDefinition.radiusInPoints / physicsWorldDefinition.ptmRatio,
+                                                        dampingStrength: particleSystemDefinition.dampingStrength,
+                                                        gravityScale: Engine.particleSystemGravityScale,
+                                                        density: particleSystemDefinition.density)
     }
 
     /**
