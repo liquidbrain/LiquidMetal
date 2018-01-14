@@ -50,7 +50,7 @@ static b2World* world = nil;
                               size:(Size2D)size
 {
     b2PolygonShape shape;
-    shape.SetAsBox(size.width * 0.5f, size.height * 0.5f);  // TODO: Why a box?
+    shape.SetAsBox(size.width * 0.5f, size.height * 0.5f);
 
     b2ParticleGroupDef particleGroupDef;
     particleGroupDef.flags = b2_waterParticle;
