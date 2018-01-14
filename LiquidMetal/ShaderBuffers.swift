@@ -21,7 +21,7 @@ final class ShaderBuffers {
     /**
      Returns a buffer large enough to hold the x and y postions for all particles.
      */
-    class func makeVertexBuffer(device: MTLDevice!, particleSystem: UnsafeMutableRawPointer!) -> MTLBuffer? {
+    class func makeVertexBuffer(device: MTLDevice, particleSystem: UnsafeMutableRawPointer!) -> MTLBuffer? {
         vertexCount = Int(LiquidFun.particleCount(forSystem: particleSystem))
         let positions = LiquidFun.particlePositions(forSystem: particleSystem)
         let bufferSize = MemoryLayout<Float>.size * vertexCount * nbrOfPositions
@@ -33,9 +33,9 @@ final class ShaderBuffers {
 
     /**
      Returns a buffer containing values for our shader uniforms: normalized device coorderinates, points-to-LiquidFun
-     meters ratio, and particle radius to the uniform buffer.
+     meters ratio, and particle radius.
      */
-    class func makeUniformBuffer(device: MTLDevice!, particleRadius: Float, ptmRatio: Float) -> MTLBuffer? {
+    class func makeUniformBuffer(device: MTLDevice, particleRadius: Float, ptmRatio: Float) -> MTLBuffer? {
         // Create the orthographic projection matrix using normalized device coordinates
         // (for near and far).
         let screenSize: CGSize = UIScreen.main.bounds.size
