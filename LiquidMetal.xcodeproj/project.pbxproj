@@ -69,6 +69,7 @@
 		525C49151F5E19A200E6D2C4 /* b2Rope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 525C48951F5E19A200E6D2C4 /* b2Rope.cpp */; };
 		525C49191F60C6A500E6D2C4 /* LiquidFun.mm in Sources */ = {isa = PBXBuildFile; fileRef = 525C49181F60C6A500E6D2C4 /* LiquidFun.mm */; };
 		525C491C1F689D3200E6D2C4 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 525C491B1F689D3200E6D2C4 /* Shaders.metal */; };
+		52B5D7282006F94500DA7389 /* Engine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B5D7272006F94500DA7389 /* Engine.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -196,6 +197,7 @@
 		525C49181F60C6A500E6D2C4 /* LiquidFun.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LiquidFun.mm; sourceTree = "<group>"; };
 		525C491A1F60C76700E6D2C4 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
 		525C491B1F689D3200E6D2C4 /* Shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
+		52B5D7272006F94500DA7389 /* Engine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Engine.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -231,16 +233,17 @@
 				525C47CE1F5E19A200E6D2C4 /* Box2D */,
 				525C47BC1F5E197C00E6D2C4 /* AppDelegate.swift */,
 				525C47BE1F5E197C00E6D2C4 /* ViewController.swift */,
-				525C47C01F5E197C00E6D2C4 /* Main.storyboard */,
-				525C47C31F5E197C00E6D2C4 /* Assets.xcassets */,
-				525C47C51F5E197C00E6D2C4 /* LaunchScreen.storyboard */,
-				525C47C81F5E197C00E6D2C4 /* Info.plist */,
+				52B5D7272006F94500DA7389 /* Engine.swift */,
 				525C49171F60C6A500E6D2C4 /* LiquidFun.h */,
 				525C49181F60C6A500E6D2C4 /* LiquidFun.mm */,
 				525C491A1F60C76700E6D2C4 /* BridgingHeader.h */,
 				525C491B1F689D3200E6D2C4 /* Shaders.metal */,
 				31DD0C34D5428832AC7E655C /* ShaderBuffers.swift */,
 				31DD04DED42D9E0207C1F1D8 /* Math.swift */,
+				525C47C31F5E197C00E6D2C4 /* Assets.xcassets */,
+				525C47C51F5E197C00E6D2C4 /* LaunchScreen.storyboard */,
+				525C47C01F5E197C00E6D2C4 /* Main.storyboard */,
+				525C47C81F5E197C00E6D2C4 /* Info.plist */,
 			);
 			path = LiquidMetal;
 			sourceTree = "<group>";
@@ -550,6 +553,7 @@
 				525C48FA1F5E19A200E6D2C4 /* b2ChainAndCircleContact.cpp in Sources */,
 				525C48AC1F5E19A200E6D2C4 /* b2Settings.cpp in Sources */,
 				525C48F71F5E19A200E6D2C4 /* b2Island.cpp in Sources */,
+				52B5D7282006F94500DA7389 /* Engine.swift in Sources */,
 				525C49081F5E19A200E6D2C4 /* b2MouseJoint.cpp in Sources */,
 				525C48AE1F5E19A200E6D2C4 /* b2Stat.cpp in Sources */,
 				525C49121F5E19A200E6D2C4 /* b2ParticleGroup.cpp in Sources */,
