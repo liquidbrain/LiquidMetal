@@ -25,11 +25,14 @@ final class Engine {
 
     static let particleSystemGravityScale: Float = 1.0
 
+    /** The layer that is used for text. */
+    var textLayer: CATextLayer?
+
+    /** The layer that Metal uses for rendering. */
+    var metalLayer: CAMetalLayer!
+
     /** The interface to a single GPU. */
     var metalDevice: MTLDevice!
-
-    /** The backing layer for a view that uses Metal for rendering. */
-    var metalLayer: CAMetalLayer!
 
     /** The queue that organizes the order in which command buffers are executed by the GPU. */
     var commandQueue: MTLCommandQueue!
@@ -47,13 +50,17 @@ final class Engine {
     /** The particle system. */
     var particleSystem: UnsafeMutableRawPointer?
 
-    var physicsWorldDefinition: PhysicsWorldDefinition
-    var particleSystemDefinition: ParticleSystemDefinition
+    var parentView: UIView
 
     var screenWidth: Float
     var screenHeight: Float
 
+    var physicsWorldDefinition: PhysicsWorldDefinition
+    var particleSystemDefinition: ParticleSystemDefinition
+
     var backgroundColor: MTLClearColor
+
+    var isTextBeingDrawn: Bool
 
     init?(view: UIView,
           screenWidth: Float,
@@ -61,11 +68,13 @@ final class Engine {
           physicsWorldDefinition: PhysicsWorldDefinition,
           particleSystemDefinition: ParticleSystemDefinition,
           backgroundColor: MTLClearColor) {
+        self.parentView = view
         self.screenWidth = screenWidth
         self.screenHeight = screenHeight
         self.physicsWorldDefinition = physicsWorldDefinition
         self.particleSystemDefinition = particleSystemDefinition
         self.backgroundColor = backgroundColor
+        self.isTextBeingDrawn = false
 
         // Create the Metal device which serves as the interface to a single GPU.
         let md = MTLCreateSystemDefaultDevice()
@@ -229,6 +238,49 @@ final class Engine {
         // Commits the command buffer for execution as soon as possible.
         commandBuffer?.present(drawable!)
         commandBuffer?.commit()
+    }
+
+    func drawText(fontName: String, fontSize: Float, text: String, animate: Bool = false) {
+        if isTextBeingDrawn {
+            clearText()
+        }
+
+        let font = CTFontCreateWithName(fontName as CFString, CGFloat(fontSize), nil)
+        let fontSizeCG = CGFloat(fontSize)
+        let fontColor = UIColor.lightText.cgColor
+        let frameRect = CGRect(x: parentView.layer.bounds.origin.x,
+                               y: parentView.layer.bounds.midY - fontSizeCG,
+                               width: parentView.layer.bounds.width,
+                               height: (fontSizeCG * 2))
+
+        textLayer = CATextLayer()
+        textLayer!.frame = frameRect
+        textLayer!.font = font
+        textLayer!.fontSize = fontSizeCG
+        textLayer!.foregroundColor = fontColor
+        textLayer!.string = text
+        textLayer!.alignmentMode = kCAAlignmentCenter
+        textLayer!.contentsScale = UIScreen.main.scale
+        textLayer!.isWrapped = false
+
+        if animate {
+            let fadeAnimation = CABasicAnimation(keyPath: "opacity")
+            fadeAnimation.fromValue = 0.0
+            fadeAnimation.toValue = 1.0
+            fadeAnimation.duration = 1.75
+            fadeAnimation.repeatCount = Float.greatestFiniteMagnitude
+            fadeAnimation.autoreverses = true
+            textLayer!.opacity = 0.0
+            textLayer!.add(fadeAnimation, forKey: "fadeAnimation")
+        }
+
+        parentView.layer.addSublayer(textLayer!)
+    }
+
+    func clearText() {
+        if let textLayer = textLayer {
+            textLayer.removeFromSuperlayer()
+        }
     }
 
     func clearViewToBackgroundColor() {
