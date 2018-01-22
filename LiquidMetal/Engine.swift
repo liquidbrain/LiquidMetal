@@ -240,24 +240,24 @@ final class Engine {
         commandBuffer?.commit()
     }
 
-    func drawText(fontName: String, fontSize: Float, text: String, animate: Bool = false) {
+    func drawText(fontName: String, fontSize: Float, fontColor: UIColor, text: String, animate: Bool = false) {
         if isTextBeingDrawn {
             clearText()
         }
 
         let font = CTFontCreateWithName(fontName as CFString, CGFloat(fontSize), nil)
         let fontSizeCG = CGFloat(fontSize)
-        let fontColor = UIColor.lightText.cgColor
-        let frameRect = CGRect(x: parentView.layer.bounds.origin.x,
-                               y: parentView.layer.bounds.midY - fontSizeCG,
-                               width: parentView.layer.bounds.width,
-                               height: (fontSizeCG * 2))
+        let fontColorCG = fontColor.cgColor
+        let frameRectCG = CGRect(x: parentView.layer.bounds.origin.x,
+                                 y: parentView.layer.bounds.midY - fontSizeCG,
+                                 width: parentView.layer.bounds.width,
+                                 height: (fontSizeCG * 2))
 
         textLayer = CATextLayer()
-        textLayer!.frame = frameRect
+        textLayer!.frame = frameRectCG
         textLayer!.font = font
         textLayer!.fontSize = fontSizeCG
-        textLayer!.foregroundColor = fontColor
+        textLayer!.foregroundColor = fontColorCG
         textLayer!.string = text
         textLayer!.alignmentMode = kCAAlignmentCenter
         textLayer!.contentsScale = UIScreen.main.scale

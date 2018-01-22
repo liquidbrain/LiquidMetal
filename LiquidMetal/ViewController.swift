@@ -85,7 +85,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     // Notifies the view controller that its view was added to a view hierarchy.
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        engine.drawText(fontName: "Helvetica", fontSize: 36.0, text: "Tap anywhere", animate: true)
+        engine.drawText(fontName: "Helvetica", fontSize: 36.0, fontColor: UIColor.lightText, text: "Tap anywhere", animate: true)
     }
 
     // Override this method to release any resources that can be recreated.
