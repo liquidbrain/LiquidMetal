@@ -35,6 +35,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     var doubleTapGesture: UITapGestureRecognizer!
     var longPressGesture: UILongPressGestureRecognizer!
 
+    let firstTap = 0
+    var numberOfTaps = 0
+
     // This method is called after the view controller has loaded its view hierarchy into memory.
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -75,6 +78,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         view.addGestureRecognizer(longPressGesture)
 
         startUpdateServices()
+
+
+    }
+
+    // Notifies the view controller that its view was added to a view hierarchy.
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        engine.drawText(fontName: "Helvetica", fontSize: 36.0, text: "Tap anywhere", animate: true)
     }
 
     // Override this method to release any resources that can be recreated.
@@ -133,6 +144,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     @objc
     func handleTap(gestureRecognizer: UITapGestureRecognizer) {
         os_log("Handle tap", log: OSLog.default, type: .debug)
+
+        if numberOfTaps == firstTap {
+            engine.clearText()
+        }
 
         let touchLocation = gestureRecognizer.location(in: view)
         let position = Vector2D(x: Float(touchLocation.x) / ViewController.ptmRatio,
