@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		31DD0B9AD0CCAA4BAA59E1B0 /* Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31DD04DED42D9E0207C1F1D8 /* Math.swift */; };
 		31DD0D14973937EA19349BBD /* ShaderBuffers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31DD0C34D5428832AC7E655C /* ShaderBuffers.swift */; };
+		524C0AC820196501009D8C69 /* pop_drip.wav in Resources */ = {isa = PBXBuildFile; fileRef = 524C0AC720196501009D8C69 /* pop_drip.wav */; };
 		525C47BD1F5E197C00E6D2C4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525C47BC1F5E197C00E6D2C4 /* AppDelegate.swift */; };
 		525C47BF1F5E197C00E6D2C4 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525C47BE1F5E197C00E6D2C4 /* ViewController.swift */; };
 		525C47C21F5E197C00E6D2C4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 525C47C01F5E197C00E6D2C4 /* Main.storyboard */; };
@@ -75,6 +76,7 @@
 /* Begin PBXFileReference section */
 		31DD04DED42D9E0207C1F1D8 /* Math.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Math.swift; sourceTree = "<group>"; };
 		31DD0C34D5428832AC7E655C /* ShaderBuffers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShaderBuffers.swift; sourceTree = "<group>"; };
+		524C0AC720196501009D8C69 /* pop_drip.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = pop_drip.wav; sourceTree = "<group>"; };
 		525C47B91F5E197C00E6D2C4 /* LiquidMetal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LiquidMetal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		525C47BC1F5E197C00E6D2C4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		525C47BE1F5E197C00E6D2C4 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -211,6 +213,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		524C0AC6201964E9009D8C69 /* SoundAssets */ = {
+			isa = PBXGroup;
+			children = (
+				524C0AC720196501009D8C69 /* pop_drip.wav */,
+			);
+			path = SoundAssets;
+			sourceTree = "<group>";
+		};
 		525C47B01F5E197C00E6D2C4 = {
 			isa = PBXGroup;
 			children = (
@@ -231,6 +241,7 @@
 			isa = PBXGroup;
 			children = (
 				525C47CE1F5E19A200E6D2C4 /* Box2D */,
+				524C0AC6201964E9009D8C69 /* SoundAssets */,
 				525C47BC1F5E197C00E6D2C4 /* AppDelegate.swift */,
 				525C47BE1F5E197C00E6D2C4 /* ViewController.swift */,
 				52B5D7272006F94500DA7389 /* Engine.swift */,
@@ -492,6 +503,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				525C47C71F5E197C00E6D2C4 /* LaunchScreen.storyboard in Resources */,
+				524C0AC820196501009D8C69 /* pop_drip.wav in Resources */,
 				525C47C41F5E197C00E6D2C4 /* Assets.xcassets in Resources */,
 				525C47C21F5E197C00E6D2C4 /* Main.storyboard in Resources */,
 			);
