@@ -2,6 +2,8 @@
 //  ViewController.swift
 //  LiquidMetal
 //
+//  pop_drip.wav is used under a Creative Commons license from: https://rcptones.com/dev_tones/
+//
 //  Created by John Koszarek on 9/4/17.
 //  Copyright © 2017 John Koszarek. All rights reserved.
 //
@@ -21,6 +23,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     //let backgroundColor = MTLClearColor(red: 64.0/255.0, green: 75.0/255.0, blue: 79.0/255.0, alpha: 1.0)    // storm gray
     let backgroundColor = MTLClearColor(red: 58.0/255.0, green: 62.0/255.0, blue: 61.0/255.0, alpha: 1.0)    // storm gray - darker
     //let backgroundColor = MTLClearColor(red: 36.0/255.0, green: 36.0/255.0, blue: 36.0/255.0, alpha: 1.0)    // storm gray - darkest
+
+    // Sound played when the screen is tapped.
+    let tapAudioFilename = Bundle.main.path(forResource: "pop_drip.wav", ofType: nil)
 
     // Handles rendering and physics, including the particle system.
     var engine: Engine!
@@ -59,7 +64,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                         screenHeight: screenHeight,
                         physicsWorldDefinition: physicsWorldDef,
                         particleSystemDefinition: particleSystemDef,
-                        backgroundColor: backgroundColor)
+                        backgroundColor: backgroundColor,
+                        tapAudioFilename: tapAudioFilename)
         guard engine != nil else {
             return
         }
@@ -78,8 +84,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         view.addGestureRecognizer(longPressGesture)
 
         startUpdateServices()
-
-
     }
 
     // Notifies the view controller that its view was added to a view hierarchy.
@@ -143,11 +147,13 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
 
     @objc
     func handleTap(gestureRecognizer: UITapGestureRecognizer) {
-        os_log("Handle tap", log: OSLog.default, type: .debug)
+        //os_log("Handle tap", log: OSLog.default, type: .debug)
 
         if numberOfTaps == firstTap {
             engine.clearText()
         }
+
+        engine.playTapAudio()
 
         let touchLocation = gestureRecognizer.location(in: view)
         let position = Vector2D(x: Float(touchLocation.x) / ViewController.ptmRatio,
@@ -162,12 +168,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         // Note we're not currently using UITapGestureRecognizer doubleTapGesture because we'd need the
         // double tap gesture to fail before a single tap is regcognized; this made the single tap to
         // create a new particle box feel sluggish.
-        os_log("Handle double tap", log: OSLog.default, type: .debug)
+        //os_log("Handle double tap", log: OSLog.default, type: .debug)
     }
 
     @objc
     func handleLongPress(gestureRecognizer: UILongPressGestureRecognizer) {
-        os_log("Handle long press", log: OSLog.default, type: .debug)
+        //os_log("Handle long press", log: OSLog.default, type: .debug)
 
         engine.destroyParticles()
         if engine.particleCount() > 0 {

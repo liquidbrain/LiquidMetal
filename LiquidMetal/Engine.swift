@@ -4,6 +4,7 @@
 //
 
 import UIKit
+import AVFoundation
 import Metal
 import os.log
 
@@ -60,6 +61,9 @@ final class Engine {
 
     var backgroundColor: MTLClearColor
 
+    // Plays a sound when the user taps the screen. */
+    var tapAudioPlayer: AVAudioPlayer?
+
     var isTextBeingDrawn: Bool
 
     init?(view: UIView,
@@ -67,7 +71,8 @@ final class Engine {
           screenHeight: Float,
           physicsWorldDefinition: PhysicsWorldDefinition,
           particleSystemDefinition: ParticleSystemDefinition,
-          backgroundColor: MTLClearColor) {
+          backgroundColor: MTLClearColor,
+          tapAudioFilename: String?) {
         self.parentView = view
         self.screenWidth = screenWidth
         self.screenHeight = screenHeight
@@ -130,6 +135,12 @@ final class Engine {
         createPhysicsWorld()
         createParticleSystem()
         setMaxParticles(maxParticles: particleSystemDefinition.maxParticles)
+
+        // Create the audio player used for sound when the user taps the screen.
+        if let tapAudioFilename = tapAudioFilename {
+            let url = URL(fileURLWithPath: tapAudioFilename)
+            tapAudioPlayer = try? AVAudioPlayer(contentsOf: url)
+        }
     }
 
     deinit {
@@ -304,5 +315,9 @@ final class Engine {
         // Commits the command buffer for execution as soon as possible.
         commandBuffer?.present(drawable!)
         commandBuffer?.commit()
+    }
+
+    func playTapAudio() {
+        tapAudioPlayer?.play()
     }
 }
