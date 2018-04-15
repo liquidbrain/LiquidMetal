@@ -2,7 +2,9 @@
 
 Small physics demo using Google's LiquidFun 2D rigid-body and fluid simulation library: http://google.github.io/liquidfun/
 
-### TODO
+### Using the App
 
-Expound upon this and add a screenshot or video of LiquidMetal in action.
+Tap the screen to create particles.
+
+Tilt the device to have the particles interact with each other and gravity.
 
