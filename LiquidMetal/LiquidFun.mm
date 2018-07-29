@@ -118,7 +118,6 @@ static b2World* world = nil;
 
 + (void)destroyParticlesForSystem:(void*)particleSystem
 {
-
     b2ParticleGroup* particleGroup = ((b2ParticleSystem*)particleSystem)->GetParticleGroupList();
     while (particleGroup != nil) {
         particleGroup->DestroyParticles();
